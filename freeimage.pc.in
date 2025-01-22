@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: FreeImage
+Version: @VERSION@
+Description: https://freeimage.sourceforge.io/
+Libs: -L${libdir} 
+Cflags: -I${includedir}
