@@ -13,11 +13,22 @@ include ( GNUInstallDirs )
 include ( CMakePackageConfigHelpers )
 
 ##### Options #####
-option(SUPPORT_FMT_WEBP "use lib webp" OFF)
-option(SUPPORT_FMT_JPEG "use lib jpeg" OFF)
-option(SUPPORT_FMT_OPENEXR "use lib openexr" OFF)
-option(SUPPORT_FMT_TIFF "use lib tiff" OFF)
-option(SUPPORT_FMT_JXR "use lib jxr" OFF)
+option ( SUPPORT_FMT_WEBP "use lib webp" ON ) 
+option ( SUPPORT_FMT_JPEG "use lib jpeg" ON ) 
+option ( SUPPORT_FMT_OPENEXR "use lib openexr" ON )
+option ( SUPPORT_FMT_TIFF "use lib tiff" ON )
+
+#NOT YET SUPPORTED IN QNX
+option ( SUPPORT_FMT_JXR "use lib jxr" OFF ) 
+
+### Tests
+if ( (NOT SUPPORT_FMT_WEBP) OR (NOT SUPPORT_FMT_JPEG) OR (NOT SUPPORT_FMT_OPENEXR) OR (NOT SUPPORT_FMT_TIFF) )
+set (TESTS_DEFAULT_OPT OFF )
+else ()
+set (TESTS_DEFAULT_OPT ON )
+endif ()
+
+option( BUILD_TESTS "build test binary" ${TESTS_DEFAULT_OPT} )
 
 ##### PkgConfig #####
 write_basic_package_version_file( ${PROJECT_NAME}ConfigVersion.cmake 
@@ -411,7 +422,27 @@ file ( GLOB         SRC_LIBRAWLITE
     Source/LibRawLite/src/libraw_datastream.cpp
 )
 file ( GLOB         SRC_OTHER
-    Source/LibPNG/*.c 
+    Source/LibPNG/png.c
+    Source/LibPNG/pngconf.h 
+    Source/LibPNG/pngdebug.h 
+    Source/LibPNG/pngerror.c 
+    Source/LibPNG/pngget.c 
+    Source/LibPNG/pnginfo.h 
+    Source/LibPNG/pnglibconf.h 
+    Source/LibPNG/pngmem.c 
+    Source/LibPNG/pngpread.c 
+    Source/LibPNG/pngpriv.h 
+    Source/LibPNG/pngread.c 
+    Source/LibPNG/pngrio.c 
+    Source/LibPNG/pngrtran.c 
+    Source/LibPNG/pngrutil.c 
+    Source/LibPNG/pngset.c 
+    Source/LibPNG/pngstruct.h 
+    Source/LibPNG/pngtrans.c 
+    Source/LibPNG/pngwio.c 
+    Source/LibPNG/pngwrite.c 
+    Source/LibPNG/pngwtran.c 
+    Source/LibPNG/pngwutil.c
     Source/ZLib/*.c 
 )
 file ( GLOB         SRC_FREEIMAGE
@@ -476,7 +507,7 @@ file ( GLOB         SRC_FREEIMAGE
     Source/FreeImage/PluginPNM.cpp
     Source/FreeImage/WuQuantizer.cpp
     Source/FreeImage/ConversionType.cpp
-    # Source/FreeImage/PluginEXR.cpp
+    Source/FreeImage/PluginEXR.cpp
     Source/FreeImage/PluginPSD.cpp
     Source/FreeImage/ZLibInterface.cpp
     Source/FreeImage/ConversionUINT16.cpp
@@ -549,7 +580,20 @@ file ( GLOB         PROJECT_HEADER_FILES
     Source/FreeImage.h 
     Wrapper/FreeImagePlus/FreeImagePlus.h
 )
-# Tests???
+
+##### Tests #####
+if ( BUILD_TESTS )
+    file ( GLOB         TEST_FILES
+        TestAPI/test*.cpp 
+    )
+    add_executable ( FreeImageTests
+        TestAPI/MainTestSuite.cpp 
+        TestAPI/TestSuite.h 
+        ${TEST_FILES}
+        ${SRC}
+    )
+#target_link_libraries( FreeImageTests ${PROJECT_NAME} )
+endif ()
 
 ##### Installation #####
 install (   TARGETS     ${PROJECT_NAME}         
@@ -561,3 +605,8 @@ install (   FILES       ${PROJECT_HEADER_FILES}
 install (   FILES       "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
             DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )
+if ( BUILD_TESTS )
+    install (   TARGETS     FreeImageTests
+                DESTINATION ${CMAKE_INSTALL_BINDIR}/${PROJECT_NAME} 
+    )
+endif ()
