@@ -1,14 +1,14 @@
 //*@@@+++@@@@******************************************************************
 //
-// Copyright © Microsoft Corp.
+// Copyright ï¿½ Microsoft Corp.
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
 // 
-// • Redistributions of source code must retain the above copyright notice,
+// ï¿½ Redistributions of source code must retain the above copyright notice,
 //   this list of conditions and the following disclaimer.
-// • Redistributions in binary form must reproduce the above copyright notice,
+// ï¿½ Redistributions in binary form must reproduce the above copyright notice,
 //   this list of conditions and the following disclaimer in the documentation
 //   and/or other materials provided with the distribution.
 // 
@@ -74,18 +74,28 @@
 #include "arm.h"
 #endif
 
-#ifdef __ANSI__
+#ifdef __ANSI__ 
 #define PLATFORM_ANSI
 #include "ansi.h"
 #endif
 
 //================================================================
 
-#ifdef PLATFORM_ANSI
+#if defined( PLATFORM_ANSI ) || defined (__QNX__)
 typedef unsigned long long U64;
-#else // PLATFORM_ANSI
+#else // PLATFORM_ANSI || __QNX__
 typedef unsigned __int64 U64;
-#endif // PLATFORM_ANSI
+#endif // PLATFORM_ANSI || __QNX__
+
+//================================================================
+
+#ifdef __aarch64__
+#include "arm.h"
+#endif
+
+#ifdef __x86_64__
+#include "../x86/x86.h"
+#endif
 
 //================================================================
 #define MARKERCOUNT (PACKETLENGTH * 2)
