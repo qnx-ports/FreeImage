@@ -139,7 +139,9 @@
    /* NEON optimizations are to be at least considered by libpng, so enable the
     * callbacks to do this.
     */
+#ifndef __QNX__
 #  define PNG_FILTER_OPTIMIZATIONS png_init_filter_functions_neon
+#endif
 
    /* By default the 'intrinsics' code in arm/filter_neon_intrinsics.c is used
     * if possible - if __ARM_NEON__ is set and the compiler version is not known
@@ -2096,8 +2098,10 @@ PNG_INTERNAL_FUNCTION(void, PNG_FILTER_OPTIMIZATIONS, (png_structp png_ptr,
     * CFLAGS in place of CPPFLAGS *and* uses symbol prefixing.
     */
 #  if PNG_ARM_NEON_OPT > 0
+#ifndef __QNX__
 PNG_INTERNAL_FUNCTION(void, png_init_filter_functions_neon,
-   (png_structp png_ptr, unsigned int bpp), PNG_EMPTY);
+  (png_structp png_ptr, unsigned int bpp), PNG_EMPTY);
+#endif
 #endif
 
 #if PNG_MIPS_MSA_OPT > 0
